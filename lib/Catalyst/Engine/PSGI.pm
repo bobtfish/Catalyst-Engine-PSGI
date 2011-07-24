@@ -115,11 +115,14 @@ around prepare_query_parameters => sub {
     }
 };
 
+# Newer Catalyst prefers ->_set_env and will warn if it isn't
+# called.
+my $_env_writer = __PACKAGE__->can('_set_env') || __PACKAGE__->can('env') || die;
 sub prepare_request {
     my ( $self, $c, %args ) = @_;
 
     if ( $args{env} ) {
-        $self->env( $args{env} );
+        $self->$_env_writer( $args{env} );
     }
 
     $self->{buffer} = '';
